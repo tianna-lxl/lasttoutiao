@@ -65,9 +65,20 @@ export default {
     login () {
       this.$refs.ruleForm.validate(isok => {
         if (isok) {
-          this.$message({ type: 'success', message: '登陆成功' })
-        } else {
-          this.$message({ type: 'warning', message: '登录失败' })
+          this.$axios({
+            url: '/authorizations',
+            method: 'post',
+            data: this.ruleForm
+          }).then(res => {
+            // this.$message({ type: 'success', message: '登陆成功' })
+            if (res.status === 201) {
+              window.localStorage.setItem('user-token', res.data.data.token)
+              // console.log(res.data.data.token)
+              this.$router.push('/')
+            }
+          }).catch(res => {
+            this.$message({ type: 'warning', message: '登录失败' })
+          })
         }
       })
     }
